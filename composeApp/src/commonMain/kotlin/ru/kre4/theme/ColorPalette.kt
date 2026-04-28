@@ -10,7 +10,7 @@ data class ColorPalette(
 )
 
 val darkGreen = ColorPalette(
-    mainColor = Color.Green, // просто цвет из Color.kt
+    mainColor = Color.Green,
     singleTheme = Color.White,
     oppositeTheme = Color.Black,
 )
