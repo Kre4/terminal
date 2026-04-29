@@ -1,4 +1,4 @@
-package ru.kre4.theme
+package ru.kre4.terminal.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color

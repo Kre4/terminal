@@ -1,4 +1,4 @@
-package ru.kre4.theme
+package ru.kre4.terminal.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography

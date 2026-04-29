@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ru.kre4.theme.Terminal
-import ru.kre4.theme.TerminalTheme
+import ru.kre4.terminal.theme.Terminal
+import ru.kre4.terminal.theme.TerminalTheme
 
 @Composable
 @Preview
