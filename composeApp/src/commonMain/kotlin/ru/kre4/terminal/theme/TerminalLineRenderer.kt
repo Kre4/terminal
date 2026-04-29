@@ -20,8 +20,6 @@ fun TerminalLineRenderer(line: TerminalLine) {
         )
         is TerminalLine.Output -> Text(
             text = line.text,
-//            color = Color(0xff22c55e),
-//            color = Color.Green,
             color = DarkGreenPalette.mainDarkColor,
             style = line.style,
             fontFamily = FontFamily.Monospace,
@@ -31,7 +29,7 @@ fun TerminalLineRenderer(line: TerminalLine) {
         is TerminalLine.Error -> Text(
             text = line.message,
             color = DarkGreenPalette.attentionColor,
-            fontWeight = FontWeight(400),
+            fontWeight = FontWeight(800),
             fontFamily = FontFamily.Monospace,
             fontSize = 14.sp,
         )

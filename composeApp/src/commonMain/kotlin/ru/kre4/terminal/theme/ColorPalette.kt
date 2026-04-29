@@ -12,11 +12,7 @@ data class ColorPalette(
 
 val DarkGreenPalette = ColorPalette(
     mainColor = Color(0xAA22c55e), // border, lines etc
-    mainBrightColor =Color(0xff22c55e), // input
-    mainDarkColor =  Color(0xB34ade80), // output Color(0xff22c55e)
-    attentionColor = Color(0xfff87171)
+    mainBrightColor = Color(0xff05df72), // input
+    mainDarkColor = Color(0xB300c950), // output Color(0xff22c55e)
+    attentionColor = Color(0xFFff6467)
 )
-
-val LocalColors = staticCompositionLocalOf<ColorPalette> {
-    DarkGreenPalette
-}
