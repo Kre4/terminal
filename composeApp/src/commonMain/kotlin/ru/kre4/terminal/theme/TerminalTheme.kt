@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun TerminalTheme(content: @Composable () -> Unit) {
-    val colors = darkGreen
+    val colors = DarkGreenPalette
 
 //    CompositionLocalProvider(
 //        LocalColors provides colors,

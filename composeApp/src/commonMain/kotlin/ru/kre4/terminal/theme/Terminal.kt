@@ -19,11 +19,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.input.key.*
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import ru.kre4.terminal.TerminalLine
 import ru.kre4.terminal.TerminalViewModel
 
 @Composable
@@ -49,7 +46,7 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
                     radius = 12.dp,
                     spread = 1.dp,
                     alpha = 0.7f,
-                    color = Color.Green,
+                    color = DarkGreenPalette.mainColor,
                     offset = DpOffset(x = 0.dp, 0.dp)
                 )
             )
@@ -59,7 +56,7 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
             .border(
                 width = 2.dp,
                 brush = Brush.linearGradient(
-                    listOf(Color.Green, Color.Green)
+                    listOf( DarkGreenPalette.mainColor,  DarkGreenPalette.mainColor)
                 ),
                 shape = RoundedCornerShape(12.dp)
             ),
@@ -77,7 +74,7 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
                         .fillMaxWidth()
                         .drawBehind {
                             drawLine(
-                                color = Color.Green,
+                                color = DarkGreenPalette.mainColor,
                                 start = Offset(x = 0f, y = 0f),
                                 end = Offset(x = size.width, y = 0f),
                                 strokeWidth = 1f
@@ -143,30 +140,5 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
 
             }
         }
-    }
-}
-
-@Composable
-fun TerminalLineRenderer(line: TerminalLine) {
-    when (line) {
-        is TerminalLine.Prompt -> Text(
-            text = "> ${line.command}",
-            color = Color.Green,
-            fontFamily = FontFamily.Monospace,
-            fontSize = 14.sp,
-        )
-        is TerminalLine.Output -> Text(
-            text = line.text,
-            style = line.style,
-            fontFamily = FontFamily.Monospace,
-            fontSize = 14.sp,
-        )
-        is TerminalLine.Error -> Text(
-            text = line.message,
-//            color = MaterialTheme.colorScheme.error,
-            color = Color.Red,
-            fontFamily = FontFamily.Monospace,
-            fontSize = 14.sp,
-        )
     }
 }
