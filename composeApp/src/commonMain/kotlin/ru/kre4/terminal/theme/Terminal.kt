@@ -30,6 +30,7 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
 
+
     LaunchedEffect(listState) {
         snapshotFlow { state.history.size }
             .collect { size ->
@@ -52,11 +53,11 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
             )
             .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(13.dp))
             .clip(RoundedCornerShape(12.dp))
-            .fillMaxSize(0.8f)
+            .fillMaxSize(0.98f)
             .border(
                 width = 2.dp,
                 brush = Brush.linearGradient(
-                    listOf( DarkGreenPalette.mainColor,  DarkGreenPalette.mainColor)
+                    listOf(DarkGreenPalette.mainColor, DarkGreenPalette.mainColor)
                 ),
                 shape = RoundedCornerShape(12.dp)
             ),

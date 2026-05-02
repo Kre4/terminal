@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import ru.kre4.terminal.theme.Terminal
 import ru.kre4.terminal.theme.TerminalTheme
 import ru.kre4.terminal.theme.animaton.SvgFallAnimation
@@ -19,24 +20,21 @@ import ru.kre4.terminal.theme.animaton.SvgFallAnimation
 @Composable
 @Preview
 fun App() {
-   TerminalTheme {
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Terminal()
     var windowOffsetX by remember { mutableStateOf(0f) }
     var windowOffsetY by remember { mutableStateOf(0f) }
 
     TerminalTheme {
-        Box() {
+        Box(
+            Modifier
+                .background(Color(0xFF111111))
+                .fillMaxSize()
+        ) {
             Box(
                 modifier = Modifier
-                    .background(Color.Blue)
-                    .fillMaxSize()
+//                    .background(Color.Blue)
+                    .fillMaxSize(0.5f)
                     .offset(x = windowOffsetX.dp, y = windowOffsetY.dp)
+                    .zIndex(200f)
                     .pointerInput(Unit) {
                         detectDragGestures { change, dragAmount ->
                             change.consume()
@@ -48,6 +46,8 @@ fun App() {
             ) {
                 Terminal()
             }
+
+            SvgFallAnimation()
 
         }
     }
