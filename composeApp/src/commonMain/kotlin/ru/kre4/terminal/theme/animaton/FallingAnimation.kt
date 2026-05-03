@@ -22,7 +22,7 @@ import kotlin.random.Random
 object AnimationConstants {
     const val ICON_SIZE = 46f
     const val ANIMATION_DURATION = 80_000
-    const val GRID_COLUMNS = 8
+    const val GRID_COLUMNS = 14
     const val GRID_ROWS = 8
 }
 

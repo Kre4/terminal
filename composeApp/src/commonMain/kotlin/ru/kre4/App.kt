@@ -27,11 +27,11 @@ fun App() {
         Box(
             Modifier
                 .background(Color(0xFF111111))
-                .fillMaxSize()
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ) {
             Box(
                 modifier = Modifier
-//                    .background(Color.Blue)
                     .fillMaxSize(0.5f)
                     .offset(x = windowOffsetX.dp, y = windowOffsetY.dp)
                     .zIndex(200f)
