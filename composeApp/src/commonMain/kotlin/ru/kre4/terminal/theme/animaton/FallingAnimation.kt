@@ -16,8 +16,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kmpterminal.composeapp.generated.resources.Res
+import kmpterminal.composeapp.generated.resources.aws_s3_logo
+import kmpterminal.composeapp.generated.resources.flyway_logo
+import kmpterminal.composeapp.generated.resources.gradle_logo
+import kmpterminal.composeapp.generated.resources.hibernate_logo
 import kmpterminal.composeapp.generated.resources.java_logo
+import kmpterminal.composeapp.generated.resources.junit5_logo
+import kmpterminal.composeapp.generated.resources.kafka_logo
 import kmpterminal.composeapp.generated.resources.kotlin_logo_simplified
+import kmpterminal.composeapp.generated.resources.liquibase_logo
+import kmpterminal.composeapp.generated.resources.maven_logo
+import kmpterminal.composeapp.generated.resources.postgresql_logo
+import kmpterminal.composeapp.generated.resources.rabbitmq_logo
+import kmpterminal.composeapp.generated.resources.spring_boot_logo
 import org.jetbrains.compose.resources.painterResource
 import kotlin.random.Random
 
@@ -53,7 +64,18 @@ private fun rememberIconProgress(durationMs: Int, delayMs: Int): Float {
 fun SvgFallAnimation(
     painters: List<Painter> = listOf(
         painterResource(Res.drawable.kotlin_logo_simplified),
-        painterResource(Res.drawable.java_logo)
+        painterResource(Res.drawable.java_logo),
+        painterResource(Res.drawable.spring_boot_logo),
+        painterResource(Res.drawable.aws_s3_logo),
+        painterResource(Res.drawable.flyway_logo),
+        painterResource(Res.drawable.gradle_logo),
+        painterResource(Res.drawable.hibernate_logo),
+        painterResource(Res.drawable.kafka_logo),
+        painterResource(Res.drawable.liquibase_logo),
+        painterResource(Res.drawable.maven_logo),
+        painterResource(Res.drawable.postgresql_logo),
+        painterResource(Res.drawable.rabbitmq_logo),
+        
     )
 ) {
     val iconCount: Int = 40;
