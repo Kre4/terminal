@@ -15,29 +15,25 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import kmpterminal.composeapp.generated.resources.Res
-import kmpterminal.composeapp.generated.resources.aws_s3_logo
-import kmpterminal.composeapp.generated.resources.flyway_logo
-import kmpterminal.composeapp.generated.resources.gradle_logo
-import kmpterminal.composeapp.generated.resources.hibernate_logo
-import kmpterminal.composeapp.generated.resources.java_logo
-import kmpterminal.composeapp.generated.resources.junit5_logo
-import kmpterminal.composeapp.generated.resources.kafka_logo
-import kmpterminal.composeapp.generated.resources.kotlin_logo_simplified
-import kmpterminal.composeapp.generated.resources.liquibase_logo
-import kmpterminal.composeapp.generated.resources.maven_logo
-import kmpterminal.composeapp.generated.resources.postgresql_logo
-import kmpterminal.composeapp.generated.resources.rabbitmq_logo
-import kmpterminal.composeapp.generated.resources.spring_boot_logo
+import kmpterminal.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import kotlin.random.Random
 
-private data class FallingIconConfig(
+object AnimationConstants {
+    const val ICON_SIZE = 46f
+    const val ANIMATION_DURATION = 80_000
+    const val GRID_COLUMNS = 8
+    const val GRID_ROWS = 8
+}
+
+data class FallingIconConfig(
     val painterIndex: Int,
-    val xFraction: Float,
-    val sizeDp: Float,
+    val columnIndex: Int,
+    val totalColumns: Int,
+    val xJitter: Float,
+    val sizeDp: Float = AnimationConstants.ICON_SIZE,
     val rotationDeg: Float,
-    val alpha: Float,
+    val alpha: Float = 0.7f,
     val durationMs: Int,
     val delayMs: Int,
 )
@@ -51,14 +47,19 @@ private fun rememberIconProgress(durationMs: Int, delayMs: Int): Float {
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = durationMs,
-                delayMillis = delayMs,
                 easing = LinearEasing,
+            ),
+            initialStartOffset = StartOffset(
+                offsetMillis = delayMs,
+                offsetType = StartOffsetType.FastForward,
             )
         ),
         label = "fall_progress",
     )
     return progress
 }
+
+
 
 @Composable
 fun SvgFallAnimation(
@@ -75,30 +76,13 @@ fun SvgFallAnimation(
         painterResource(Res.drawable.maven_logo),
         painterResource(Res.drawable.postgresql_logo),
         painterResource(Res.drawable.rabbitmq_logo),
-        
-    )
-) {
-    val iconCount: Int = 40;
-    val iconSizeRange: ClosedRange<Float> = 32f..72f;
-    val baseDurationMs: Int = 40_000;
 
-    val configs = remember(iconCount, baseDurationMs) {
-        val rng = Random(seed = 42)
-        List(iconCount) {
-            val speedFactor = 0.6f + 0.5f * 0.8f   // 0.6 … 1.4
-            val duration = (baseDurationMs * speedFactor).toInt()
-            val delay = (rng.nextFloat() * duration).toInt()
-            FallingIconConfig(
-                painterIndex = rng.nextInt(painters.size),
-                xFraction = rng.nextFloat(),
-                sizeDp = iconSizeRange.start +
-                        rng.nextFloat() * (iconSizeRange.endInclusive - iconSizeRange.start),
-                rotationDeg = -15f + rng.nextFloat() * 30f,
-                alpha = 0.55f + rng.nextFloat() * 0.45f,
-                durationMs = duration,
-                delayMs = delay,
-            )
-        }
+        )
+) {
+
+    val configs = remember(AnimationConstants.GRID_COLUMNS) {
+        initConfigs(painters, AnimationConstants.ANIMATION_DURATION,
+            AnimationConstants.GRID_COLUMNS, AnimationConstants.GRID_ROWS)
     }
 
     val progressValues = configs.map { cfg ->
@@ -116,13 +100,16 @@ fun SvgFallAnimation(
 
                 val canvasW = size.width
                 val canvasH = size.height
+                val iconSizePx = with(density) { AnimationConstants.ICON_SIZE.dp.toPx() }
+                val cellWidth = canvasW / configs.first().totalColumns
 
                 configs.forEachIndexed { index, icon ->
                     val progress = progressValues[index]
                     val painter = painters[icon.painterIndex]
-                    val iconSizePx = with(density) { icon.sizeDp.dp.toPx() }
-                    val x = icon.xFraction * (canvasW - iconSizePx)
-                    val y = progress * (canvasH + iconSizePx) - iconSizePx - 20
+                    val cellCenter = (icon.columnIndex + 0.5f) * cellWidth
+                    val x = cellCenter - iconSizePx / 2f + icon.xJitter * cellWidth
+
+                    val y = progress * (canvasH + iconSizePx) - iconSizePx
 
                     withTransform(
                         transformBlock = {
@@ -145,4 +132,33 @@ fun SvgFallAnimation(
     )
 
 }
+
+fun initConfigs(painters: List<Painter>, baseDurationMs: Int, columns: Int, rows: Int): List<FallingIconConfig> {
+    val rng = Random(seed = 53)
+
+    val iconCount = columns * rows
+
+    val painterIndices = (0 until iconCount).map { it % painters.size }
+
+    return List(iconCount) { i ->
+        val col = i % columns
+        val row = i / columns
+
+        val duration = baseDurationMs
+        val rowPhase = (row.toFloat() / rows) * duration
+        val jitter = - (rng.nextFloat() - 0.5f) * duration * 0.06f
+        val initialOffset = (rowPhase + jitter).toInt()
+
+        FallingIconConfig(
+            painterIndex = painterIndices[i],
+            columnIndex = col,
+            totalColumns = columns,
+            xJitter = (rng.nextFloat() - 0.5f) * 0.2f,
+            rotationDeg = -15f + rng.nextFloat() * 30f,
+            durationMs = baseDurationMs,
+            delayMs = initialOffset,
+        )
+    }
+}
+
 
