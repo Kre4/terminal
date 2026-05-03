@@ -66,6 +66,7 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
         Scaffold(
             modifier = Modifier.clip(RoundedCornerShape(14.dp))
                 .background(Color.Transparent, RoundedCornerShape(1.dp)),
+            containerColor = Color(0xFF101010),
             bottomBar = {
                 TextField(
                     value = input,
@@ -105,24 +106,11 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
         ) { paddingValues: PaddingValues ->
             Row(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(Color.Transparent)
                     .padding(paddingValues)
                     .fillMaxWidth(0.5f)
                     .weight(5f)
             ) {
-//                Text(
-//                    text = output,
-//                    color = Color.White,
-//                    modifier = Modifier
-//                        .padding(
-//                            start = 20.dp,
-//                            top = 30.dp,
-//                            end = 20.dp,
-//                            bottom = 30.dp,
-//                        )
-//                        .verticalScroll(scrollState)
-//
-//                )
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.weight(1f).fillMaxWidth()

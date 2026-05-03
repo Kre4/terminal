@@ -21,7 +21,7 @@ import kotlin.random.Random
 
 object AnimationConstants {
     const val ICON_SIZE = 46f
-    const val ANIMATION_DURATION = 80_000
+    const val ANIMATION_DURATION = 100_000
     const val GRID_COLUMNS = 14
     const val GRID_ROWS = 8
 }
@@ -34,32 +34,10 @@ data class FallingIconConfig(
     val sizeDp: Float = AnimationConstants.ICON_SIZE,
     val rotationDeg: Float,
     val alpha: Float = 0.7f,
-    val durationMs: Int,
-    val delayMs: Int,
+    // phaseFraction: where in the [0..1] cycle this icon starts.
+    // Derived from delayMs / duration so the single master clock can offset each icon.
+    val phaseFraction: Float,
 )
-
-@Composable
-private fun rememberIconProgress(durationMs: Int, delayMs: Int): Float {
-    val transition = rememberInfiniteTransition(label = "icon_fall")
-    val progress by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = durationMs,
-                easing = LinearEasing,
-            ),
-            initialStartOffset = StartOffset(
-                offsetMillis = delayMs,
-                offsetType = StartOffsetType.FastForward,
-            )
-        ),
-        label = "fall_progress",
-    )
-    return progress
-}
-
-
 
 @Composable
 fun SvgFallAnimation(
@@ -76,18 +54,29 @@ fun SvgFallAnimation(
         painterResource(Res.drawable.maven_logo),
         painterResource(Res.drawable.postgresql_logo),
         painterResource(Res.drawable.rabbitmq_logo),
-
-        )
+    )
 ) {
-
     val configs = remember(AnimationConstants.GRID_COLUMNS) {
-        initConfigs(painters, AnimationConstants.ANIMATION_DURATION,
-            AnimationConstants.GRID_COLUMNS, AnimationConstants.GRID_ROWS)
+        initConfigs(
+            painters,
+            AnimationConstants.ANIMATION_DURATION,
+            AnimationConstants.GRID_COLUMNS,
+            AnimationConstants.GRID_ROWS,
+        )
     }
 
-    val progressValues = configs.map { cfg ->
-        rememberIconProgress(durationMs = cfg.durationMs, delayMs = cfg.delayMs)
-    }
+    val transition = rememberInfiniteTransition(label = "fall_master")
+    val masterProgress by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = AnimationConstants.ANIMATION_DURATION,
+                easing = LinearEasing,
+            )
+        ),
+        label = "master_progress",
+    )
 
     val density = LocalDensity.current
 
@@ -101,14 +90,15 @@ fun SvgFallAnimation(
                 val canvasW = size.width
                 val canvasH = size.height
                 val iconSizePx = with(density) { AnimationConstants.ICON_SIZE.dp.toPx() }
-                val cellWidth = canvasW / configs.first().totalColumns
+                val cellWidth = canvasW / AnimationConstants.GRID_COLUMNS
 
-                configs.forEachIndexed { index, icon ->
-                    val progress = progressValues[index]
+                configs.forEach { icon ->
                     val painter = painters[icon.painterIndex]
+
+                    val progress = (masterProgress + icon.phaseFraction) % 1f
+
                     val cellCenter = (icon.columnIndex + 0.5f) * cellWidth
                     val x = cellCenter - iconSizePx / 2f + icon.xJitter * cellWidth
-
                     val y = progress * (canvasH + iconSizePx) - iconSizePx
 
                     withTransform(
@@ -130,24 +120,25 @@ fun SvgFallAnimation(
                 }
             }
     )
-
 }
 
-fun initConfigs(painters: List<Painter>, baseDurationMs: Int, columns: Int, rows: Int): List<FallingIconConfig> {
+fun initConfigs(
+    painters: List<Painter>,
+    baseDurationMs: Int,
+    columns: Int,
+    rows: Int,
+): List<FallingIconConfig> {
     val rng = Random(seed = 53)
-
     val iconCount = columns * rows
-
     val painterIndices = (0 until iconCount).map { it % painters.size }
 
     return List(iconCount) { i ->
         val col = i % columns
         val row = i / columns
 
-        val duration = baseDurationMs
-        val rowPhase = (row.toFloat() / rows) * duration
-        val jitter = - (rng.nextFloat() - 0.5f) * duration * 0.06f
-        val initialOffset = (rowPhase + jitter).toInt()
+        val rowPhase = row.toFloat() / rows
+        val jitter = (rng.nextFloat() - 0.5f) * 0.06f
+        val phaseFraction = (rowPhase + jitter).coerceIn(0f, 1f)
 
         FallingIconConfig(
             painterIndex = painterIndices[i],
@@ -155,10 +146,7 @@ fun initConfigs(painters: List<Painter>, baseDurationMs: Int, columns: Int, rows
             totalColumns = columns,
             xJitter = (rng.nextFloat() - 0.5f) * 0.2f,
             rotationDeg = -15f + rng.nextFloat() * 30f,
-            durationMs = baseDurationMs,
-            delayMs = initialOffset,
+            phaseFraction = phaseFraction,
         )
     }
 }
-
-
