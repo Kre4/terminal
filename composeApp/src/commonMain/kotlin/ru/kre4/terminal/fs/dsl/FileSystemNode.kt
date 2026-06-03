@@ -3,14 +3,14 @@ package ru.kre4.terminal.fs.dsl
 import ru.kre4.terminal.fs.dsl.FileSystemNode.Directory
 
 
-sealed class FileSystemNode(open val parent: FileSystemNode?) {
-    class File(val name: String, override val parent: FileSystemNode) : FileSystemNode(parent)
+sealed class FileSystemNode(val name: String, val parent: FileSystemNode?) {
+    class File(name: String, parent: FileSystemNode) : FileSystemNode(name, parent)
 
     class Directory(
-        val name: String,
+        name: String,
+        parent: FileSystemNode? = null,
         val children: MutableList<FileSystemNode> = mutableListOf(),
-        override val parent: FileSystemNode? = null
-    ) : FileSystemNode(null) {
+    ) : FileSystemNode(name, parent) {
 
         fun directory(name: String, block: Directory.() -> Unit) {
             val childDir = Directory(name, parent = this)
@@ -27,7 +27,7 @@ sealed class FileSystemNode(open val parent: FileSystemNode?) {
         }
     }
 
-    class Project(val name: String, override val parent: FileSystemNode) : FileSystemNode(parent)
+    class Project(name: String, parent: FileSystemNode) : FileSystemNode(name, parent)
 }
 
 fun root(block: Directory.() -> Unit): FileSystemNode {
