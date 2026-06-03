@@ -32,5 +32,6 @@ fun TerminalLineRenderer(line: TerminalLine) {
             fontFamily = FontFamily.Monospace,
             fontSize = 14.sp,
         )
+        is TerminalLine.Composable -> line.content
     }
 }
