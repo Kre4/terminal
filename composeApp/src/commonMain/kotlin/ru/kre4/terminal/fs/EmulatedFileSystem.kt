@@ -15,7 +15,8 @@ class EmulatedFileSystem {
             }
         } as FileSystemNode.Directory
 
-    private var currentNode: FileSystemNode.Directory = rootNode
+    var currentNode: FileSystemNode.Directory = rootNode
+        private set
 
     fun currentPath(): String = buildPath(currentNode)
 
@@ -32,9 +33,9 @@ class EmulatedFileSystem {
         }
 
         val target = findNode(normalized)
-        return when {
-            target == null -> CdResult.Failure("cd: no such file or directory: $to")
-            target !is FileSystemNode.Directory -> CdResult.Failure("cd: not a directory: $to")
+        return when (target) {
+            null -> CdResult.Failure("cd: no such file or directory: $to")
+            !is FileSystemNode.Directory -> CdResult.Failure("cd: not a directory: $to")
             else -> {
                 currentNode = target
                 CdResult.Success

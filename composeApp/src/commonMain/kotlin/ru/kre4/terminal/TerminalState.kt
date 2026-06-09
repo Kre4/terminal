@@ -14,7 +14,7 @@ import ru.kre4.terminal.fs.EmulatedFileSystem
 
 sealed interface TerminalLine {
     data class Prompt(val command: String) : TerminalLine
-    data class Output(val text: String, val style: TextStyle = TextStyle.Default) : TerminalLine
+    data class Output(val text: CharSequence, val style: TextStyle = TextStyle.Default) : TerminalLine
     data class Error(val message: String) : TerminalLine
     data class Composable(val content: @androidx.compose.runtime.Composable () -> Unit) : TerminalLine
 }
@@ -44,7 +44,7 @@ class TerminalViewModel : ViewModel() {
 
             try {
                 val context = CommandExecutionContext(state.value.fileSystem)
-                val result = cmd.execute(args, context)
+                val result = cmd.executeCommand(args, context)
                 result.errorLines?.forEach { appendLine(TerminalLine.Error(it)) }
                 result.lines?.forEach { appendLine(TerminalLine.Output(it)) }
                 result.content?.let { appendLine(TerminalLine.Composable(it)) }

@@ -5,7 +5,7 @@ import ru.kre4.terminal.fs.EmulatedFileSystem
 
 data class CommandResult(
     val content: (@Composable () -> Unit)? = null,
-    val lines: List<String>? = null,
+    val lines: List<CharSequence>? = null,
     val errorLines: List<String>? = null,
     val exitCode: Int = 0
 ) {
@@ -18,8 +18,18 @@ data class CommandExecutionContext(
     val fileSystem: EmulatedFileSystem
 )
 
-interface Command {
-    fun execute(args: List<String>, context: CommandExecutionContext): CommandResult
+abstract class Command {
+    fun executeCommand(args: List<String>, context: CommandExecutionContext): CommandResult {
+        if (args.size == 1 && args[0] == "--help") {
+            return CommandResult(lines = help())
+        }
 
-    fun name(): String
+        return execute(args, context)
+    }
+
+    protected abstract fun execute(args: List<String>, context: CommandExecutionContext): CommandResult
+
+    abstract fun name(): String
+
+    abstract fun help(): List<CharSequence>
 }

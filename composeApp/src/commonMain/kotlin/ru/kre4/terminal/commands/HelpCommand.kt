@@ -1,6 +1,6 @@
 package ru.kre4.terminal.commands
 
-class HelpCommand: Command {
+class HelpCommand: Command() {
     override fun execute(args: List<String>, executionContext: CommandExecutionContext): CommandResult {
         return CommandResult(
             lines = listOf(
@@ -11,4 +11,6 @@ class HelpCommand: Command {
     }
 
     override fun name(): String = "help"
+
+    override fun help(): List<CharSequence> = listOf("Help help?")
 }

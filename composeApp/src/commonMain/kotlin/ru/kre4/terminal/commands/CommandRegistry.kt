@@ -6,7 +6,9 @@ class CommandRegistry {
     init {
         register(
             HelpCommand(),
-            PwdCommand()
+            PwdCommand(),
+            LsCommand(),
+            CdCommand()
         )
     }
 

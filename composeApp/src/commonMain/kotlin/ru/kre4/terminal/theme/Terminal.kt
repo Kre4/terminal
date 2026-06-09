@@ -35,7 +35,7 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
         snapshotFlow { state.history.size }
             .collect { size ->
                 if (size > 0) {
-                    listState.scrollToItem(size - 1)
+                    listState.scrollToItem(size - 1, scrollOffset = 2000)
                 }
             }
     }
@@ -108,7 +108,7 @@ fun Terminal(viewModel: TerminalViewModel = TerminalViewModel()) {
                 modifier = Modifier
                     .background(Color.Transparent)
                     .padding(paddingValues)
-                    .fillMaxWidth(0.5f)
+                    .fillMaxWidth()
                     .weight(5f)
             ) {
                 LazyColumn(

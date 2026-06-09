@@ -1,10 +1,12 @@
 package ru.kre4.terminal.commands
 
-class PwdCommand : Command  {
+class PwdCommand : Command()  {
     override fun execute(args: List<String>, executionContext: CommandExecutionContext): CommandResult {
         var currentPath = executionContext.fileSystem.currentPath()
         return CommandResult(lines = listOf(currentPath))
     }
 
-    override fun name(): String = "ls"
+    override fun name(): String = "pwd"
+
+    override fun help(): List<CharSequence> = listOf("Prints working directory.")
 }
